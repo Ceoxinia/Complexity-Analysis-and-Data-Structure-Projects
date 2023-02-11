@@ -1,0 +1,304 @@
+\chapter{Annexe}
+\section{Repartition des taches}
+\par
+\small
+\resizebox{17cm}{!}{
+\begin{tabular}{| c | c | }
+    \hline
+    Member &  Tache   \\
+    \hline
+    BEBNBACHIR Mohamed Amir &  Implimentation des algorithmes et l'etude expiremental selection et a bulle  \\
+    \hline
+    BOUCHOUL Bouchra &  L'étude théorique et expérimentale et implémentation de Tri TAS et insertion  \\
+    \hline
+    KHEMISSI Maroua & L'étude théorique du du tri par selection ,fusion et bulle ,implimentation et etude experimentale de tri fusion  \\
+    \hline
+    MEDJKOUNE Roumaissa & L'étude théorique et expérimentale et implémentation de Tri Rapide  \\
+    \hline
+  
+\end{tabular}}
+\\ \\
+\newpage
+\section{files.c}
+Le programme c qui genere les fichiers des donnees 
+\begin{minted}[
+breaklines=true,
+frame=lines,
+linenos
+]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#define Length 50000000
+int main()
+{
+    long i;
+    FILE *f;
+    f=fopen("tablerand.txt","w");
+
+    /*Initialization of the array  */
+    for(i=0;i<Length;i++){
+       fprintf(f, "%d ", rand());
+       //fprintf(f, "%d ", i); for ordered
+       //fprintf(f, "%d ", Length-i); for inverse
+    }
+    fclose(f);
+
+}
+\end{minted}
+\section{main.c}
+\begin{minted}[
+breaklines=true,
+frame=lines,
+linenos
+]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define Length 50000000
+
+typedef long *array;
+array A[Length];
+array Tmp[Length];
+
+/*********** Procedure Merge ************/
+void merge(array a, long first,long last){
+   long i = first;
+   long med = (first+last)/2;
+   long j = med+1;
+   long k = 0;
+   while (i<=med && j<=last){
+   	if (a[i] < a[j]){
+	   Tmp[k] = a[i];
+	   i++;
+	   k++;
+	   }
+	else{
+	   Tmp[k] = a[j];
+	   k++;
+	   j++;}
+    }
+   while (i<=med) {Tmp[k] = a[i]; k++;i++;}
+   while (j<=last) {Tmp[k] = a[j]; k++; j++;}
+
+   for (j=0; j<k; j++)
+	a[first+j] = Tmp[j];
+}
+/*********** Procedure merge sort ************/
+void mergeSort(array a, long first, long last)
+{
+   long middle,i,j;
+   if (first>=last) return;
+   middle = (first+last)/2;
+   mergeSort(a,first,middle);
+   mergeSort(a,middle+1,last);
+   merge(a,first,last);
+}
+/********* bubblesort*******/
+void bubsort(int* T,int n){
+    int  temp;
+    int b;
+    for (int i =1;i<n;i++){
+        b=1;
+        for (int j=0;j<n-i;j++){
+            if (T[j]>T[j+1]){
+                b=0;
+            temp=T[j];
+            T[j]=T[j+1];
+            T[j+1]=temp;}
+        }
+        if(b)break;
+        
+    }
+}
+/********** selection ********/
+void selection(int* T,int n){
+    int  min,temp;
+    for (int i =0;i<n;i++){
+        min =i;
+        for (int j=i+1;j<n;j++){
+            if (T[j]<T[min]){
+                min=j;
+            }
+        }
+        temp=T[min];
+        T[min]=T[i];
+        T[i]=temp;
+        
+    }
+}
+
+/*********** tri insertion ********/
+void insertion(long *T, long n) {
+  long j, temp;
+  for (long i = 1; i < n; i++) {
+    temp=T[i];
+    j=i-1;
+    while ((T[j]>temp) && (j>=0)) {
+            T[j+1]=T[j];
+            j=j-1;
+            }
+      T[j+1]=temp;
+  }
+}
+/************ tri tas **********/
+void swap(long* a, long* b)
+{
+ 
+    long temp = *a;
+ 
+    *a = *b;
+ 
+    *b = temp;
+}
+ 
+// To heapify a subtree rooted with node i
+// which is an index in arr[].
+// n is size of heap
+void heapify(long arr[], long N, long i)
+{
+    // Find largest among root, left child and right child
+ 
+    // Initialize largest as root
+    long largest = i;
+ 
+    // left = 2*i + 1
+    long left = 2 * i + 1;
+ 
+    // right = 2*i + 2
+    long right = 2 * i + 2;
+ 
+    // If left child is larger than root
+    if (left < N && arr[left] > arr[largest])
+ 
+        largest = left;
+ 
+    // If right child is larger than largest
+    // so far
+    if (right < N && arr[right] > arr[largest])
+ 
+        largest = right;
+ 
+    // Swap and continue heapifying if root is not largest
+    // If largest is not root
+    if (largest != i) {
+ 
+        swap(&arr[i], &arr[largest]);
+ 
+        // Recursively heapify the affected
+        // sub-tree
+        heapify(arr, N, largest);
+    }
+}
+void heapsort(long *T, long n) {
+  long temp;
+  for (long k = n / 2-1; k >= 0; k--) {
+    heapify(T, n, k);
+  }
+  for (long wn = n - 1; wn >= 0; wn--) {
+    temp = T[0];
+    T[0] = T[wn];
+    T[wn] = temp;
+    heapify(T, wn, 0);
+  }
+}
+/****************Tri Rapide****************/
+  void permuter(array t, long a, long b) {
+  long temp;
+  temp = t[a];
+  t[a] = t[b];
+  t[b] = temp;
+}
+//pivot au millieu
+long partition_1(array tab, long deb, long fin) {
+  long p = deb;
+  long pivot = tab[deb];
+  for (long i = deb + 1; i <=fin; i++) {
+    if (tab[i] < pivot) {
+      p++;
+      permuter(tab, i, p);
+    }
+  }
+  permuter(tab, p, deb);
+  return (p);
+}
+
+void tri_rapide_1(array tab, long deb, long fin) {
+  if (deb < fin) {
+    long piv = partition_1(tab, deb, fin);
+    tri_rapide_1(tab, deb, piv - 1);
+    tri_rapide_1(tab, piv + 1, fin);
+  }
+}
+//pivot a la fin
+long partition_2(array tab, long deb, long fin) {
+  long p = fin;
+  long pivot = tab[fin];
+  for (long i = fin - 1; i >=deb; i--) {
+    if (tab[i] > pivot) {
+      p--;
+      permuter(tab, i, p); 
+    }
+  }
+  permuter(tab, p, fin);
+  return (p);
+}
+
+void tri_rapide_2(array tab, long deb, long fin) {
+  if (deb < fin) {
+    long piv = partition_2(tab, deb, fin);
+    tri_rapide_2(tab, deb, piv - 1);
+    tri_rapide_2(tab, piv + 1, fin);
+  }
+}
+  
+
+//pivot au millieu
+void tri_rapide_3(long list[], long left, long right)
+{
+    if (left >= right) return;
+    long mid = (left + right) / 2;
+    long i = left, j = right;
+    long pivot = list[mid];
+    long k = 0;
+
+    while (left <= right) {
+        while (list[left] < pivot) left++;
+        while (list[right] > pivot) right--;
+        if (left <= right) {
+            permuter(list,left,right);
+            left++; right--;
+        }
+    }
+    tri_rapide_3(list, i, right);
+    tri_rapide_3(list, left, j);
+}
+int main(void) {
+  
+  long Ns[8] = {10000,   50000,   100000,   500000,
+                1000000, 5000000};
+  FILE *f, *fptr;
+  clock_t t1, t2;
+  double delta;
+  fptr = fopen("log rand bullr.txt", "w");
+  for (int i = 0; i < 4; i++) {
+    f = fopen("tablerand.txt", "r");
+    for (long j = 0; j < Ns[i]; j++) {
+      //T[j] = j;
+      fscanf(f, "%li", &T[j]);
+    }
+    t1 = clock();
+    printf("%li com\n",bubsort(T, Ns[i]));
+    t2 = clock();
+    delta = (double)(t2 - t1) / CLOCKS_PER_SEC;
+    fprintf(fptr, "%f ,", delta);
+    printf("%li items %f s\n ",Ns[i],delta);
+  }
+  fclose(fptr);
+  for (long i = 0; i < 100; i++) {
+    printf("%li\n", T[i]);
+  }
+  return 0;
+}
+
+
+\end{minted}

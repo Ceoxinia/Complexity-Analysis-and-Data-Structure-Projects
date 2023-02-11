@@ -1,0 +1,230 @@
+\chapter{Annexe :code source}
+\section{Repartition des taches}
+\par
+\small
+\resizebox{17cm}{!}{
+\begin{tabular}{| c | c | }
+    \hline
+    Member &  Tache   \\
+    \hline
+    BEBNBACHIR Mohamed Amir & la conception de la solution iterative de hanoi + l'implementation en langage C + etude experimentale et analyse des resultats de la version iterative\\
+    \hline
+    BOUCHOUL Bouchra &  L'algorithme de verification avec calcule de sa complexite + Presentation d'une instance du probleme avec la solution (exemple)  \\
+    \hline
+    KHEMISSI Maroua &  Historique et presentation du probleme + Definition formelle du probleme+  Presentation de l'algorithme de resolution avec complexite theorique + representation de la modelisation de la solution\\
+    \hline
+    MEDJKOUNE Roumaissa & le programme de l'algorithme de résolution récursive en langage c + Son étude expérimentale + Analyse des résultats  \\
+    \hline
+  
+\end{tabular}}
+\\ \\
+\newpage
+\section{algorithme.c}
+Le programme c 
+\begin{minted}[
+breaklines=true,
+frame=lines,
+linenos
+]{c}
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define MAX 100
+#include<time.h>
+//pile
+struct discs {
+	int size;
+};
+typedef discs *disc;
+//les piles
+typedef struct pile
+{
+    disc items[MAX];
+    int top;
+    int taille;
+    int num;
+} pile;
+
+typedef struct Tour{
+	int sizej;
+	pile *A;
+	pile *B;
+	pile *C;
+}Tour;
+typedef Tour *TourH;
+
+
+//les fonctions des piles
+void initPile(pile *p,int num)
+{
+    p->top = -1;
+    p->taille = 0;
+    p->num=num;
+}
+int isempty(pile *p) {
+   if (p->top == -1)
+        return 1;
+    else
+        return 0;
+}
+int pilePleine(pile *s)
+{
+    if (s->top == MAX - 1)
+        return 1;
+    else
+        return 0;
+}
+void push(pile *p, disc bt) {
+ 
+    if (pilePleine(p))
+    {
+        printf("la pile est pleine");
+    }
+    else
+    {
+        p->top++;
+        p->items[p->top] = bt;
+    }
+    p->taille++;
+
+}
+disc pop(pile *p) {
+  if (isempty(p)){
+  	return NULL;
+  }
+    p->taille--;
+    disc val = p->items[p->top];
+    p->top--;
+    return val;
+    }
+
+///Initialiser le jeux en precisant le nombre initial des disques
+TourH initHanoi(int size){
+	TourH Tr= (TourH)malloc(sizeof(TourH));
+	pile *A = (pile *)malloc(sizeof(pile));
+    initPile(A,1);
+    pile *B = (pile *)malloc(sizeof(pile));
+    initPile(B,2);
+    pile *C = (pile *)malloc(sizeof(pile));
+    initPile(C,3);
+    int i;
+    for (i=size;i>0;i--){
+    	disc d = (disc)malloc(sizeof(disc));
+    	d->size=i;
+    	push(A,d);
+	}
+    Tr->sizej=size;
+    Tr->A=A;
+    Tr->B=B;
+    Tr->C=C;
+ return Tr;
+}
+
+///fonction pou deplacer les disque entre les piles
+
+void move(pile *p, pile *k,int* dep){
+	disc d;
+	d=pop(p);
+	push(k,d);
+	(*dep) += 1;
+	
+}
+
+///fonctions tour d'hanoi
+void Hanoi(int n,pile *A,pile *B,pile *C,int* dep){
+	if (n>0){
+	   Hanoi(n-1,A,C,B,dep);
+	   move(A,C,dep);
+	   Hanoi(n-1,B,A,C,dep);
+	
+	}
+}
+
+void moveI(pile * from ,pile * to){
+
+    if (isempty(to))
+    {
+        push(to,pop(from));
+    }
+ 
+    else if (isempty(from))
+    {
+        push(from,pop(to));
+    }
+ 
+    else if (from->items[from->top]>to->items[to->top])
+    {
+        push(from,pop(to));
+    }
+ 
+    else
+    {
+        push(to,pop(from));
+    }
+}
+void iterativeHanoi(int n,pile* start,pile* end,pile* inter){
+    
+    int total_num_of_moves = pow(2, n) - 1;
+    
+    
+    if (n % 2 != 0)
+    {
+ 
+    for (int i = 1; i <= total_num_of_moves; i++)
+    {
+        if (i % 3 == 1)
+        moveI(start,end);
+ 
+        else if (i % 3 == 2)
+        moveI(start,inter);
+ 
+        else if (i % 3 == 0)
+        moveI(inter,end);
+    }
+    }else{
+        for (int i = 0; i < total_num_of_moves; i++)
+    {
+        if (i % 3 == 1)
+        moveI(start,end);
+ 
+        else if (i % 3 == 2)
+        moveI(end,inter);
+ 
+        else if (i % 3 == 0)
+        moveI(inter,start);
+    }
+    }
+}
+void TourHanoi(TourH Tr,int* dep){
+	Hanoi(Tr->sizej,Tr->A,Tr->B,Tr->C,dep);
+}
+
+int main(){
+//enregistrement des executions
+
+ clock_t t1,t2;
+ double time;
+ int j=5;
+ FILE *f;
+ f = fopen("nbDepHanoiRec.txt", "a");
+  if (f != NULL)
+    {  printf(" le fichier existe \n");}
+    else
+    { printf("Impossible d'ouvrir le fichier \n");}
+
+ while(j<100){
+     int d=0;
+     TourH jeu= initHanoi(j);
+     t1=clock();
+     TourHanoi(jeu,&d);
+     t2=clock();
+     time=(float)(t2 - t1) / CLOCKS_PER_SEC;
+     fprintf(f,"%d %d \n",j,d);
+     j+=5;
+ }
+
+
+return 0;
+}
+
+\end{minted}

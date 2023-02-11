@@ -1,0 +1,232 @@
+\chapter{Les algorithmes utilisées}
+\section{Algorithme A1}
+ Sachant qu’un nombre premier n est un nombre entier qui n’est divisible que par 1 et par lui-même. L’algorithme A1 va donc consister en une boucle dans laquelle on va tester si le nombre n est divisible par 2, 3, ..., n-1.
+\par
+Nous pouvons le représenter via le pseudo code suivant :
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+        $i \leftarrow 2 $\;
+
+         \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le \: n-1$}
+       {
+            
+            \uIf{$n \:\: mod \:\: 2== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i++$\;
+            }
+        }
+
+}
+    \caption{A1(Entrée:n: entier;)}
+\end{function}
+\newpage
+\section{Algorithme A2}
+ Sachant que si n est divisible par 2, il est aussi divisible par n/2 et s’il est divisible par 3, il est aussi divisible par n/3. De manière générale, si n est divisible par i pour i = 1 ... [n/2] où [n/2] dénote la partie entière de n/2, il est aussi divisible par n/i. 
+ \par
+Nous pouvons représenter une optimisation de A1 via le pseudo code suivant :
+
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+        $i \leftarrow 2 $\;
+
+         \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le \: n/2$}
+       {
+            
+            \uIf{$n \:\: mod \:\: 2== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i++$\;
+            }
+        }
+
+}
+    \caption{A2(Entrée:n: entier;)}
+\end{function}
+\newpage
+
+\section{Algorithme A3}
+ Si n est divisible par x, il est aussi divisible par n/x. Il serait intéressant d’améliorer A2 en ne répétant le test de la divisibilité que jusqu’à x = n/x.
+ \par
+Nous pouvons représenter cette amélioration de A2 via le pseudo code suivant :
+
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+        $i \leftarrow 2 $\;
+
+         \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le \: \sqrt{n}$}
+       {
+            
+            \uIf{$n \:\: mod \:\: 2== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i++$\;
+            }
+        }
+
+}
+    \caption{A3(Entrée:n: entier;)}
+\end{function}
+\newpage
+
+\section{Algorithme A4}
+ Dans le cas où n est impair, il ne faut tester la divisibilité de n que par les nombres impairs.
+ \par
+Nous pouvons le représenter via le pseudo code suivant :
+
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+
+         \If{$n <> 2 \:\: ET \:\: n \: mod \: 2 =0$}
+       {
+            $premier \leftarrow false $\;
+        }    
+         \Else {
+         \If{$n <> 2$}
+         {
+            $i \leftarrow 3 $\;
+            \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le n-2 \: $}
+       {
+            
+            \uIf{$n \:\: mod \:\: i== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i \leftarrow i+2$\;
+            }
+        }
+            }
+        }
+        
+
+}
+    \caption{A4(Entrée:n: entier;)}
+\end{function}
+\newpage
+\section{Algorithme A5}
+ Une hybridation des algorithmes A2 et A4.
+ \par
+Nous pouvons le représenter via le pseudo code suivant :
+
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+
+         \If{$n <> 2 \:\: ET \:\: n \: mod \: 2 =0$}
+       {
+            $premier \leftarrow false $\;
+        }    
+         \Else {
+         \If{$n <> 2$}
+         {
+            $i \leftarrow 3 $\;
+            \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le n/2 \: $}
+       {
+            
+            \uIf{$n \:\: mod \:\: i== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i \leftarrow i+2$\;
+            }
+        }
+            }
+        }
+        
+
+}
+    \caption{A5(Entrée:n: entier;)}
+\end{function}
+\newpage
+\section{Algorithme A6}
+ Une hybridation des algorithmes A3 et A4.
+ \par
+Nous pouvons le représenter via le pseudo code suivant :
+
+\par
+\begin{function}[H]
+    \textbf{Variables :}\\
+    i : entier\;
+    premier : bool\;
+    \Begin{
+        $premier \leftarrow vrai $\;
+
+         \If{$n <> 2 \:\: ET \:\: n \: mod \: 2 =0$}
+       {
+            $premier \leftarrow false $\;
+        }    
+         \Else {
+         \If{$n <> 2$}
+         {
+            $i \leftarrow 3 $\;
+            \While{$premier \leftarrow vrai \:\: ET \:\: i \: \le \sqrt{n} \: $}
+       {
+            
+            \uIf{$n \:\: mod \:\: i== 0$}{
+                $premier \leftarrow false $\;
+                
+            }
+            \Else{
+            $i \leftarrow i+2$\;
+            }
+        }
+            }
+        }
+        
+
+}
+    \caption{A6(Entrée:n: entier;)}
+\end{function}
+
+\section{L'evaluation theorique de la complexite}
+\resizebox{17cm}{!}{
+\begin{tabular}{| c | c | c | c |}
+    \hline
+    Algorithme &  Nombre maximum d’itération ( en fonction de n) & Complexité théorique & Nombre réel d’itération avec n=69524913 \\
+    \hline
+    A1 & n-2 & O(n) & 69524913  \\
+    \hline
+    A2 & [n/2]-1 & O(n) & 34762455  \\
+    \hline
+    A3 & \sqrt{n}-1 & O(\sqrt{n}) & 8337  \\
+    \hline
+    A4 & [n/2]-1 & O(n) & 34762455 \\
+    \hline
+    A5 & [n/4]-1 & O(n) & 17381227 \\
+    \hline
+    A6 & [\sqrt{n}/2]-1 & O(\sqrt{n}) & 4168  \\
+    \hline
+\end{tabular}}
+\\ \\ 

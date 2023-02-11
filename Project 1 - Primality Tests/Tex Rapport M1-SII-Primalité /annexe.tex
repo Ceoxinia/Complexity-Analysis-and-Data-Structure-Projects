@@ -1,0 +1,171 @@
+\chapter{Annexe}
+
+\section{Repartition des taches}
+\par
+\small
+\resizebox{17cm}{!}{
+\begin{tabular}{| c | c | }
+    \hline
+    Member &  Tache   \\
+    \hline
+    BEBNBACHIR Mohamed Amir & Analyse du temps d’exécution des nombres premiers ayant au plus 12 chiffres  \\
+    \hline
+    BOUCHOUL Bouchra & Execution et mesure de temps d'execution , preparation des donnees  \\
+    \hline
+    KHEMISSI Maroua & Analyse du temps d’exécution des 20 nombres premiers ayant la meme taille  \\
+    \hline
+    MEDJKOUNE Roumaissa & Analyse du temps d'execution apres 30 tests   \\
+    \hline
+    en collaboration de tous les membres & implémenter les algorithmes et rédige le rapport    \\
+    \hline
+\end{tabular}}
+\\ \\
+\newpage
+\section{main.c}
+\begin{minted}[
+breaklines=true,
+frame=lines,
+linenos
+]{c}
+#include <math.h>
+#include <stdio.h>
+#include <time.h>
+//Sol1 On essaie les divisions par 2,3..n-1 et on s'arrête au premier diviseur
+int A1(unsigned long long int n) {
+  for (unsigned long long int i = 2; i <= n-1; i++) {
+    if (n % i == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+//Sol2 pour accélérer la recherche, on essaie les divisions par 2,3..n/2 et on s'arrête au premier diviseur ou n/2
+int A2(unsigned long long int n) {
+  for (unsigned long long int i = 2; i <= (n / 2); i++) {
+    if (n % i == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+//Sol3 pour accélérer encore la recherche on essaie les divisions par 2,3..√n et on s'arrête au premier diviseur ou √n
+int A3(unsigned long long int n) {
+  for (unsigned long long int i = 2; i <= sqrt(n); i++) {
+    if (n % i == 0) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+//Sol4 On élimine les multiples de 2 et on essaie pas les nombres pairs ,on s'arrête au premier diviseur
+int A4(unsigned long long int n) {
+  if (n != 2 && n % 2 == 0) {
+    return 0;
+  }
+  if (n != 2) {
+    for (unsigned long long int i = 3; i <= n - 2; i += 2) {
+      if (n % i == 0) {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+//Sol5 On élimine les multiples de 2 et on essaie pas les nombres pairs ,on s'arrête au premier diviseur ou n/2
+int A5(unsigned long long int n) {
+  if (n != 2 && n % 2 == 0) {
+    return 0;
+  }
+  if (n != 2) {
+    for (unsigned long long int i = 3; i <= n / 2; i += 2) {
+      if (n % i == 0) {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+//Sol6 On élimine les multiples de 2 et on essaie pas les nombres pairs ,on s'arrête au premier diviseur ou √n
+int A6(unsigned long long int n) {
+  if (n != 2 && n % 2 == 0) {
+    return 0;
+  }
+  if (n != 2) {
+    for (unsigned long long int i = 3; i <= sqrt(n); i += 2) {
+      if (n % i == 0) {
+        return 0;
+      }
+    }
+  }
+  return 1;
+}
+int main(void) {
+  unsigned long long int T[7] = {314159,      4480649,    50943779,
+                                 999999937,   5915587277, 41996139943,
+                                 100123456789};
+  unsigned long long int T2[20] = {1500450271,
+1879048183,
+1979339339,
+2030444287,
+2860486313,
+3267000013,
+3367900313,
+3628273133,
+4093082899,
+4392489041,
+5038465463,
+5463458053,
+5555333227,
+5754853343,
+5915587277,
+6668999101,
+7896879971,
+8278487999,
+9471413089,
+9576890767};
+  unsigned long long int big = 12764787846358441471U;
+  clock_t t1, t2;
+  double delta, s;
+  int r = 0;
+  FILE *fptr, *f;
+  f= fopen("data.txt","w");
+  printf("A1\n");
+  for (int j = 0; j <20; j++ ){
+    s = 0;
+    for (int k = 0; k < 1; k++) {
+      t1 = clock();
+      r += A6(T2[j]);
+      t2 = clock();
+      delta = (double)(t2 - t1) / CLOCKS_PER_SEC;
+      s += delta;
+    }
+    fprintf(f, "%f\n", s);
+    printf("x%i %f s\n", j + 1, s);
+  }
+  fclose(f);
+  fptr = fopen("A5test.txt", "w");
+  printf("A5test1\n");
+  for (int i = 0; i < 7; i++) {
+    s = 0;
+
+    for (int k = 0; k < 1; k++) {
+      t1 = clock();
+      r += A5(T[i]);
+      t2 = clock();
+      delta = (double)(t2 - t1) / CLOCKS_PER_SEC;
+      s += delta;
+    }
+    fprintf(fptr, "%i digit number %f s\n", i + 6, s);
+    printf("%i digit number %f s\n", i + 6, s);
+  }
+  t1 = clock();
+  r += A6(big);
+  t2 = clock();
+  delta = (double)(t2 - t1) / CLOCKS_PER_SEC;
+  fprintf(fptr, "%i digit number %f s\n", 20, delta);
+  printf("%i digit number %f s %i\n", 20, delta, r);
+  fclose(fptr);
+  return 0;
+}
+\end{minted}
